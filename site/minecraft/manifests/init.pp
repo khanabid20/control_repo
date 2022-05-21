@@ -5,10 +5,12 @@ class minecraft {
   file {'/opt/minecraft/minecraft_server.jar':
     ensure => file,
     source => 'https://launcher.mojang.com/v1/objects/c8f83c5655308435b3dcf03c06d9fe8740a77469/server.jar',
+    before => Service['minecraft'],
   }
   file {'/root/jdk_17.rpm':
     ensure => file,
     source => 'https://download.oracle.com/java/17/archive/jdk-17.0.3.1_linux-x64_bin.rpm',
+    before => Package['jdk_17.rpm'],
   }
   package {'jdk_17.rpm':
     ensure => present,
@@ -30,5 +32,6 @@ class minecraft {
   service {'minecraft':
     ensure => 'running',
     enable => true,
+    require => [Package['jdk_17.rpm'], File['/opt/minecraft/eula.txt'], File['/etc/systemd/system/minecraft.service']],
   }
 }
